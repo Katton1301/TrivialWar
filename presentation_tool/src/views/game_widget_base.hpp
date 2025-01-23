@@ -26,6 +26,12 @@ public:
 signals:
     void MapChanged();
 
+    void sendMatrixSize( int columnsNumber, int rowsNumber );
+
+public slots:
+
+    void gameDataRequest( );
+
 protected:
     void create();
 

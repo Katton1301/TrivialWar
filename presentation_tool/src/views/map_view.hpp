@@ -14,15 +14,15 @@ struct Item {
     bool hide;
 };
 
-class MapView : public QAbstractTableModel
+class MapView : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit MapView(QObject *parent = nullptr) : QAbstractTableModel(parent)
+    explicit MapView(QObject *parent = nullptr) : QAbstractListModel(parent)
     {
     }
 
-    // enum DataRoles for QAbstractTableModel:
+    // enum DataRoles for QAbstractListModel:
     enum DataRoles {
         TeemIdRole = Qt::UserRole + 1,
         TypeRole,
@@ -30,36 +30,22 @@ public:
         HideRole,
     };
 
-    // PushBackRow() method for QAbstractTableModel:
-    void PushBackRow(std::vector<Item> const & row) {
+    // PushBackRow() method for QAbstractListModel:
+    void addData(Item const & row) {
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
-        m_mapMatrix.push_back(row);
+        m_mapList.push_back(row);
         endInsertRows();
     }
 
-    void PushBackColumn(std::vector<Item> const & column) {
-        beginInsertColumns(QModelIndex(), columnCount(), columnCount());
-        for(uint32_t noCol = 0; noCol < static_cast<uint32_t>(columnCount()); ++noCol)
-        {
-            m_mapMatrix.at(noCol).push_back(column.at(noCol));
-        }
-        endInsertColumns();
-    }
-
-    // PushBackRow() method for QAbstractTableModel:
-    void changeItem(uint32_t row, uint32_t column, Item const & item)
+    // PushBackRow() method for QAbstractListModel:
+    void changeItem(uint32_t i, Item const & item)
     {
-        m_mapMatrix.at(row).at(column) = item;
+        m_mapList.at(i) = item;
     }
 
     int rowCount([[maybe_unused]]const QModelIndex &parent = QModelIndex()) const override
     {
-        return m_mapMatrix.size();
-    }
-
-    int columnCount([[maybe_unused]]const QModelIndex &parent = QModelIndex()) const override
-    {
-        return m_mapMatrix.at(0).size();
+        return m_mapList.size();
     }
 
     // data() required for QAbstractListModel:
@@ -67,14 +53,13 @@ public:
     {
         if (
             !index.isValid() ||
-            index.row() < 0 || static_cast<uint32_t>(index.row()) >= m_mapMatrix.size() ||
-            index.column() < 0 || static_cast<uint32_t>(index.column()) >= m_mapMatrix.at(0).size()
+            index.row() < 0 || static_cast<uint32_t>(index.row()) >= m_mapList.size()
         )
         {
             return QVariant();
         }
 
-        Item modelEntry = m_mapMatrix[index.row()][index.column()];
+        Item modelEntry = m_mapList[index.row()];
         if (role == TeemIdRole) {return modelEntry.teamId;}
         if (role == TypeRole) {return modelEntry.type;}
         if (role == CountRole) {return modelEntry.count;}
@@ -94,6 +79,6 @@ public:
 
 private:
     // Below are the model items:
-    std::vector< std::vector< Item > >  m_mapMatrix;
+    std::vector< Item >  m_mapList;
 };
 
