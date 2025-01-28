@@ -13,6 +13,8 @@ function(create_target_pt LIST_DIR)
 
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/presentation_tool/qml
          DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/presentation_tool/resources
+         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
     include_directories( ${LIST_DIR}/src)
 

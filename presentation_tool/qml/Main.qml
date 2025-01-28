@@ -7,6 +7,9 @@ ApplicationWindow {
     id: mainApp
     width: 1280
     height: 800
+    property int globalWidth: mainApp.width * 2
+    property int globalHeight: mainApp.height * 2
+    property int mapSize: 100
 
     //Controller methods
     function intializeGame(name)
@@ -19,7 +22,10 @@ ApplicationWindow {
 
     function updateView()
     {
-        mainController.initView(mapRectangle.width, mapRectangle.height);
+        mapSize = Math.min(mainApp.width, mainApp.height);
+        mapRectangle.width = mapSize;
+        mapRectangle.height = mapSize;
+        mainController.initView(mapSize, );
     }
 
     MainController {
@@ -31,19 +37,39 @@ ApplicationWindow {
         id: mainWindow
         width: parent.width
         height: parent.height
+
         color: "lightgray"
-        Rectangle {
+        Flickable {
             id: mainRectangle
             width: parent.width
             height: parent.height
-            color: "gray"
+            contentWidth: globalWidth
+            contentHeight: globalHeight
             anchors.top: parent.top
-            anchors.verticalCenter: parent.verticalCenter
+            contentX: (contentWidth - width) / 2
+            contentY: (contentHeight - height) / 2
+            anchors.verticalCenter: parent.verticalCenter;
+            boundsMovement: Flickable.StopAtBounds
+            boundsBehavior: Flickable.DragOverBounds
+            focus: true
+            WheelHandler {
+                onWheel: (wheel)=> {
+                    if (wheel.angleDelta.y !== 0) {
+                        mainController.scale(wheel.angleDelta.y / 120);
+                    }
+                }
+            }
+
+            Image {
+                id: back
+                anchors.fill: parent
+                source: "../resources/space.jpg"
+                z: -1
+            }
+
             Rectangle {
                 id: mapRectangle
-                width: parent.width
-                height: parent.height
-                color: "white"
+                color: "transparent"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }

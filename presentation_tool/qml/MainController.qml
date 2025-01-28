@@ -7,15 +7,17 @@ Item {
     //Controller properties
     property int columnsNumber: 3
     property int rowsNumber: 3
-    property int cellWidth: 100
-    property int cellHeight: 100
+    property int mapSize: 500
+    property double scaleRate: 1.0
 
     property var mapView;
+    property var parentFlickable;
 
 
-    function connectComponents( _mapView )
+    function connectComponents( _mapView, _parentFlickable )
     {
         mapView = _mapView;
+        parentFlickable = _parentFlickable;
     }    
     
     function initEngine()
@@ -23,18 +25,20 @@ Item {
         gameWidget.gameDataRequest();
     }
 
-    function initView(width, height)
+    function initView(sizeLength)
     {
-        cellWidth = width / columnsNumber;
-        cellHeight = height / rowsNumber;
+        mapSize = sizeLength;
         Qt.createQmlObject("
                 import QtQuick 2.15
                 GridView {
                     id: mapGrid
+                    interactive: false
                     width: parent.width
                     height: parent.height
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
+                    boundsMovement: Flickable.StopAtBounds
+                    boundsBehavior: Flickable.StopAtBounds
                     function getItemAt(index)
                     {
                         return itemAtIndex(index);
@@ -45,7 +49,7 @@ Item {
                 }",
                 mapView
             );
-        updateView( width, height );
+        updateView( );
     }
 
     function mapGrid()
@@ -53,17 +57,36 @@ Item {
         return mapView.children[0];
     }
 
-    function updateView( _width, _height )
+    function scale(rate)
     {
-        mapGrid().width = _width;
-        mapGrid().height = _height;
-        mapGrid().cellWidth =  cellWidth;
-        mapGrid().cellHeight = cellHeight;
+        var newScale = scaleRate * ( rate * 0.01 + 1);
+        if(checkToChangeSize(newScale))
+        {
+            scaleRate = newScale;
+            updateView();
+        }
+    }
+
+    function checkToChangeSize(newScale)
+    {
+
+    }
+
+    function updateView( )
+    {
+        var scaledMapSize = mapSize * scaleRate
+        var cellLength = (scaledMapSize / columnsNumber + scaledMapSize / rowsNumber) / 2;
+        mapGrid().contentWidth = mapSize;
+        mapView.width = scaledMapSize;
+        mapGrid().contentHeight = mapSize;
+        mapView.height = scaledMapSize;
+        mapGrid().cellWidth =  cellLength;
+        mapGrid().cellHeight =  cellLength;
         for(var i = 0; i < columnsNumber; i++)
         {
             for(var j = 0; j < rowsNumber; j++)
             {
-                mapGrid().getItemAt(i * rowsNumber +j).setSize(cellWidth,cellHeight);
+                mapGrid().getItemAt(i * rowsNumber +j).setView(cellLength, i % 2 == 0);
             }
         }
     }
