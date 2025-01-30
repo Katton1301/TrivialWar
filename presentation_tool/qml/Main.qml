@@ -15,7 +15,7 @@ ApplicationWindow {
     function intializeGame(name)
     {
         mainApp.title = name;
-        mainController.connectComponents( mapRectangle );
+        mainController.connectComponents( mapRectangle, mainRectangle);
         mainController.initEngine();
         updateView();
     }

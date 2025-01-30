@@ -59,7 +59,7 @@ Item {
 
     function scale(rate)
     {
-        var newScale = scaleRate * ( rate * 0.01 + 1);
+        var newScale = scaleRate * ( rate * 0.02 + 1);
         if(checkToChangeSize(newScale))
         {
             scaleRate = newScale;
@@ -69,7 +69,16 @@ Item {
 
     function checkToChangeSize(newScale)
     {
-
+        var scaledMapSize = mapSize * newScale;
+        if(scaledMapSize > parentFlickable.contentWidth || scaledMapSize > parentFlickable.contentHeight ) //check on large
+        {
+            return false;
+        }
+        if((scaledMapSize / columnsNumber + scaledMapSize / rowsNumber) < 50) //check on small
+        {
+            return false;
+        }
+        return true;
     }
 
     function updateView( )
