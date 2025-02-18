@@ -31,6 +31,7 @@ signals:
 public slots:
 
     void gameDataRequest( );
+    void cellClicked( int _cellId );
 
 protected:
     void create();

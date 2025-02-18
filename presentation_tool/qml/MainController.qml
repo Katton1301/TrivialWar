@@ -46,9 +46,18 @@ Item {
                     anchors.fill: parent
                     model: gameWidget.Map
                     delegate: Map { }
+
+
                 }",
                 mapView
             );
+        for(var i = 0; i < columnsNumber; i++)
+        {
+            for(var j = 0; j < rowsNumber; j++)
+            {
+                mapGrid().getItemAt(i * rowsNumber +j).init(mainController);
+            }
+        }
         updateView( );
     }
 
@@ -99,6 +108,12 @@ Item {
             }
         }
     }
+
+    function cellClicked( cellId )
+    {
+        gameWidget.cellClicked(cellId);
+    }
+
     //End Controller methods
 
     //Main Model Class connected with c++

@@ -8,6 +8,7 @@
 
 // Create an Item so we have something to put in the model:
 struct Item {
+    int id;
     int teamId;
     int type;
     int count;
@@ -24,7 +25,8 @@ public:
 
     // enum DataRoles for QAbstractListModel:
     enum DataRoles {
-        TeemIdRole = Qt::UserRole + 1,
+        Id = Qt::UserRole + 1,
+        TeemIdRole,
         TypeRole,
         CountRole,
         HideRole,
@@ -60,6 +62,7 @@ public:
         }
 
         Item modelEntry = m_mapList[index.row()];
+        if (role == Id) {return modelEntry.id;}
         if (role == TeemIdRole) {return modelEntry.teamId;}
         if (role == TypeRole) {return modelEntry.type;}
         if (role == CountRole) {return modelEntry.count;}
@@ -70,7 +73,8 @@ public:
     // roleNames() method for QAbstractListModel:
     QHash<int,QByteArray> roleNames() const override {
         QHash<int, QByteArray> roles;
-        roles[TeemIdRole] = "Id";
+        roles[Id] = "Id";
+        roles[TeemIdRole] = "TeemId";
         roles[TypeRole] = "Type";
         roles[CountRole] = "Count";
         roles[HideRole] = "IsHide";

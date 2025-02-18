@@ -27,9 +27,10 @@ void TGameWidgetBase::Init()
     for(uint32_t i = 0; i < 9; ++i)
     {
         Item item;
+        item.id = i;
         item.count = i;
         item.teamId = i;
-        item.type = i;
+        item.type = 0;
 
         m_map->addData(item);
     }
@@ -38,4 +39,10 @@ void TGameWidgetBase::Init()
 void TGameWidgetBase::gameDataRequest( )
 {
     emit sendMatrixSize( 3, 3 );
+}
+
+
+void TGameWidgetBase::cellClicked( int _cellId )
+{
+    std::cout << _cellId << std::endl;
 }
